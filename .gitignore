@@ -1,3 +1,17 @@
+# Archivos de contexto (usados solo localmente como referencia)
 API_CONTRACTS.md
 design.md
 TEST_CASES.md
+
+# Maven build output — reportes Karate, surefire, clases compiladas
+target/
+
+# Logs
+*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/settings.json
+
+
