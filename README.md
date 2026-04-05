@@ -64,7 +64,7 @@ La suite apunta a `http://localhost:8080`. Asegurate de que la EdTech API esté 
 
 **Windows:**
 ```cmd
-mvnw.cmd test
+.\mvnw.cmd test
 ```
 
 ### 3. Ejecutar por módulo
