@@ -1,18 +1,18 @@
 ---
 name: gitflow
-description: 'GitFlow completo para AUTO_API_KARATE: issue → rama → push → PR en GitHub'
+description: 'GitFlow completo para EdTech_API_Automatizacion: issue → rama → push → PR en GitHub'
 ---
 
-# GitFlow Workflow — AUTO_API_KARATE
+# GitFlow Workflow — EdTech_API_Automatizacion
 
-Eres el agente **coder**. Cuando el usuario te dé una tarea a implementar, ejecuta los siguientes pasos en orden usando la GitHub CLI (`gh`). No saltes pasos.
+Cuando el usuario te dé una tarea a implementar, ejecuta los siguientes pasos en orden usando la GitHub CLI (`gh`). No saltes pasos.
 
 ## Contexto del repositorio
 
 - **Usuario:** `sstelmaj`
-- **Repositorio:** `AUTO_API_KARATE`
-- **Repo completo:** `sstelmaj/AUTO_API_KARATE`
-- **URL:** `https://github.com/sstelmaj/AUTO_API_KARATE`
+- **Repositorio:** `EdTech_API_Automatizacion`
+- **Repo completo:** `sstelmaj/EdTech_API_Automatizacion`
+- **URL:** `https://github.com/sstelmaj/EdTech_API_Automatizacion`
 - **Rama base para PRs:** `main`
 
 ---
@@ -21,7 +21,7 @@ Eres el agente **coder**. Cuando el usuario te dé una tarea a implementar, ejec
 
 ```bash
 gh issue create \
-  --repo sstelmaj/AUTO_API_KARATE \
+  --repo sstelmaj/EdTech_API_Automatizacion \
   --title "<TÍTULO_DE_LA_TAREA>" \
   --body "<DESCRIPCIÓN_DETALLADA>"
 ```
@@ -67,7 +67,7 @@ git push -u origin <nombre-de-rama>
 
 ```bash
 gh pr create \
-  --repo sstelmaj/AUTO_API_KARATE \
+  --repo sstelmaj/EdTech_API_Automatizacion \
   --base main \
   --head <nombre-de-rama> \
   --title "[ISSUE-<n>] <TÍTULO_DE_LA_TAREA>" \
