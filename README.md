@@ -72,21 +72,21 @@ La suite apunta a `http://localhost:8080`. Asegurate de que la EdTech API esté 
 Para correr solo un grupo de tests, activa el método correspondiente en `TestRunner.java` (descomentá el bloque deseado) y ejecutá:
 
 ```cmd
-mvnw.cmd test "-Dtest=runners.TestRunner#testAuth"
-mvnw.cmd test "-Dtest=runners.TestRunner#testCourses"
-mvnw.cmd test "-Dtest=runners.TestRunner#testStudents"
-mvnw.cmd test "-Dtest=runners.TestRunner#testActivities"
-mvnw.cmd test "-Dtest=runners.TestRunner#testGrades"
-mvnw.cmd test "-Dtest=runners.TestRunner#testReports"
-mvnw.cmd test "-Dtest=runners.TestRunner#testSecurity"
+.\mvnw.cmd test "-Dtest=runners.TestRunner#testAuth"
+.\mvnw.cmd test "-Dtest=runners.TestRunner#testCourses"
+.\mvnw.cmd test "-Dtest=runners.TestRunner#testStudents"
+.\mvnw.cmd test "-Dtest=runners.TestRunner#testActivities"
+.\mvnw.cmd test "-Dtest=runners.TestRunner#testGrades"
+.\mvnw.cmd test "-Dtest=runners.TestRunner#testReports"
+.\mvnw.cmd test "-Dtest=runners.TestRunner#testSecurity"
 ```
 
 ### 4. Filtrar por tags
 
 ```cmd
-mvnw.cmd test "-Dkarate.options=--tags @smoke"
-mvnw.cmd test "-Dkarate.options=--tags @happy-path"
-mvnw.cmd test "-Dkarate.options=--tags @error-path"
+.\mvnw.cmd test "-Dkarate.options=--tags @smoke"
+.\mvnw.cmd test "-Dkarate.options=--tags @happy-path"
+.\mvnw.cmd test "-Dkarate.options=--tags @error-path"
 ```
 
 ### 5. Ver el reporte HTML
