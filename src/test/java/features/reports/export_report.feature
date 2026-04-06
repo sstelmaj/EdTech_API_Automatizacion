@@ -1,7 +1,6 @@
 @reports @get
 Feature: Reporte de notas — GET /api/courses/{courseId}/students/{studentId}/report
-  Valida exportación de reporte: happy path, sin calificaciones, estudiante no inscrito,
-  curso inexistente y estudiante inexistente.
+  Valida exportación de reporte: PDF, HTML, JSON, formato no soportado y notas vacías.
   HU: HDU_15 | Test Cases: API-035, API-036, API-037, API-038, API-039
 
   Background:
@@ -48,8 +47,8 @@ Feature: Reporte de notas — GET /api/courses/{courseId}/students/{studentId}/r
     * def activityId2 = response.activities[1].id
 
   @smoke @happy-path @API-035
-  Scenario: API-035 — Reporte con calificaciones completas
-    # Calificar actividad 1
+  Scenario: API-035 — Exportar boletín en formato PDF
+    # Calificar ambas actividades
     * def grade1 = read('classpath:testdata/grades/grade_valid.json')
     * set grade1.studentId = studentIdentifier
     * set grade1.activityId = activityId1
@@ -59,7 +58,6 @@ Feature: Reporte de notas — GET /api/courses/{courseId}/students/{studentId}/r
     And request grade1
     When method put
     Then status 200
-    # Calificar actividad 2
     * def grade2 = read('classpath:testdata/grades/grade_valid.json')
     * set grade2.studentId = studentIdentifier
     * set grade2.activityId = activityId2
@@ -69,7 +67,66 @@ Feature: Reporte de notas — GET /api/courses/{courseId}/students/{studentId}/r
     And request grade2
     When method put
     Then status 200
-    # Obtener reporte
+    # Exportar PDF
+    Given path '/api/courses', courseId, 'students', studentIdentifier, 'report'
+    And param format = 'pdf'
+    And header X-Session-Token = token
+    When method get
+    Then status 200
+    And match responseHeaders['Content-Type'][0] contains 'pdf'
+    And assert responseBytes.length > 0
+
+  @happy-path @API-036
+  Scenario: API-036 — Exportar boletín en formato HTML
+    # Calificar ambas actividades
+    * def grade1 = read('classpath:testdata/grades/grade_valid.json')
+    * set grade1.studentId = studentIdentifier
+    * set grade1.activityId = activityId1
+    * set grade1.grade = 4.5
+    Given path '/api/courses', courseId, 'grades'
+    And header X-Session-Token = token
+    And request grade1
+    When method put
+    Then status 200
+    * def grade2 = read('classpath:testdata/grades/grade_valid.json')
+    * set grade2.studentId = studentIdentifier
+    * set grade2.activityId = activityId2
+    * set grade2.grade = 3.8
+    Given path '/api/courses', courseId, 'grades'
+    And header X-Session-Token = token
+    And request grade2
+    When method put
+    Then status 200
+    # Exportar HTML
+    Given path '/api/courses', courseId, 'students', studentIdentifier, 'report'
+    And param format = 'html'
+    And header X-Session-Token = token
+    When method get
+    Then status 200
+    And match responseHeaders['Content-Type'][0] contains 'html'
+
+  @happy-path @API-037
+  Scenario: API-037 — Exportar boletín en formato JSON
+    # Calificar ambas actividades
+    * def grade1 = read('classpath:testdata/grades/grade_valid.json')
+    * set grade1.studentId = studentIdentifier
+    * set grade1.activityId = activityId1
+    * set grade1.grade = 4.5
+    Given path '/api/courses', courseId, 'grades'
+    And header X-Session-Token = token
+    And request grade1
+    When method put
+    Then status 200
+    * def grade2 = read('classpath:testdata/grades/grade_valid.json')
+    * set grade2.studentId = studentIdentifier
+    * set grade2.activityId = activityId2
+    * set grade2.grade = 3.8
+    Given path '/api/courses', courseId, 'grades'
+    And header X-Session-Token = token
+    And request grade2
+    When method put
+    Then status 200
+    # Exportar JSON
     Given path '/api/courses', courseId, 'students', studentIdentifier, 'report'
     And param format = 'json'
     And header X-Session-Token = token
@@ -81,46 +138,30 @@ Feature: Reporte de notas — GET /api/courses/{courseId}/students/{studentId}/r
     And match response.weightedAverage == '#number'
     And match response.generalAverage == '#number'
 
-  @happy-path @API-036
-  Scenario: API-036 — Reporte sin calificaciones (notas null o ausentes)
+  @error-path @API-038
+  Scenario: API-038 — Exportar boletín con formato no soportado
+    Given path '/api/courses', courseId, 'students', studentIdentifier, 'report'
+    And param format = 'xml'
+    And header X-Session-Token = token
+    When method get
+    Then status 400
+
+  @happy-path @API-039
+  Scenario: API-039 — Exportar boletín con notas vacías (advertencia)
+    # Calificar solo una actividad, dejar la otra sin nota
+    * def grade1 = read('classpath:testdata/grades/grade_valid.json')
+    * set grade1.studentId = studentIdentifier
+    * set grade1.activityId = activityId1
+    * set grade1.grade = 4.5
+    Given path '/api/courses', courseId, 'grades'
+    And header X-Session-Token = token
+    And request grade1
+    When method put
+    Then status 200
+    # Exportar JSON — debe indicar notas vacías
     Given path '/api/courses', courseId, 'students', studentIdentifier, 'report'
     And param format = 'json'
     And header X-Session-Token = token
     When method get
     Then status 200
-    And match response.student.id == studentIdentifier
-    And match response.course == '#string'
-
-  @error-path @API-037
-  Scenario: API-037 — Reporte para estudiante no inscrito en el curso
-    # Crear otro curso sin inscribir al estudiante
-    * def course2Payload = read('classpath:testdata/courses/create_course_valid.json')
-    * set course2Payload.name = 'NoInscrito_' + java.lang.System.currentTimeMillis()
-    Given path '/api/courses'
-    And header X-Session-Token = token
-    And request course2Payload
-    When method post
-    Then status 201
-    * def courseIdOther = response.id
-    # Intentar reporte de estudiante no inscrito en ese curso
-    Given path '/api/courses', courseIdOther, 'students', studentIdentifier, 'report'
-    And param format = 'json'
-    And header X-Session-Token = token
-    When method get
-    Then status 404
-
-  @error-path @API-038
-  Scenario: API-038 — Reporte con curso inexistente
-    Given path '/api/courses', '00000000-0000-0000-0000-000000000000', 'students', studentIdentifier, 'report'
-    And param format = 'json'
-    And header X-Session-Token = token
-    When method get
-    Then status 404
-
-  @error-path @API-039
-  Scenario: API-039 — Reporte con estudiante inexistente
-    Given path '/api/courses', courseId, 'students', 'NONEXISTENT_999', 'report'
-    And param format = 'json'
-    And header X-Session-Token = token
-    When method get
-    Then status 404
+    And match response.hasEmptyGrades == true

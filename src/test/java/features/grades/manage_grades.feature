@@ -1,7 +1,8 @@
 @grades @put
 Feature: Registrar calificaciones — PUT /api/courses/{courseId}/grades
-  Valida registro de notas: happy path, nota negativa, valor no numérico, nota null y sin actividades.
-  HU: HDU_9 | Test Cases: API-030, API-031, API-032, API-033, API-034
+  Valida registro de notas: happy path, nota negativa, valor no numérico, nota nula
+  y recálculo de promedios tras cambio de ponderaciones.
+  HU: HDU_14 | Test Cases: API-030, API-031, API-032, API-033, API-034
 
   Background:
     * url baseUrl
@@ -37,7 +38,7 @@ Feature: Registrar calificaciones — PUT /api/courses/{courseId}/grades
     When method post
     Then status 200
     # Configurar actividades
-    * def actPayload = read('classpath:testdata/activities/activities_valid_two.json')
+    * def actPayload = read('classpath:testdata/activities/activities_valid_three.json')
     Given path '/api/courses', courseId, 'activities'
     And header X-Session-Token = token
     And request actPayload
@@ -45,6 +46,7 @@ Feature: Registrar calificaciones — PUT /api/courses/{courseId}/grades
     Then status 200
     * def activityId1 = response.activities[0].id
     * def activityId2 = response.activities[1].id
+    * def activityId3 = response.activities[2].id
 
   @smoke @happy-path @API-030
   Scenario: API-030 — Registrar calificación válida (0–5)
@@ -73,7 +75,7 @@ Feature: Registrar calificaciones — PUT /api/courses/{courseId}/grades
     Then status 400
     And match response.message == 'La nota no puede ser negativa'
 
-  @error-path @HALLAZGO-3 @API-032
+  @error-path @bug @HALLAZGO-3 @API-032
   Scenario: API-032 — Registrar calificación con valor no numérico
     # HALLAZGO-3: Enviar String en campo Double causa 500 en vez de 400
     * def gradePayload = read('classpath:testdata/grades/grade_non_numeric.json')
@@ -97,33 +99,44 @@ Feature: Registrar calificaciones — PUT /api/courses/{courseId}/grades
     When method put
     Then status 200
 
-  @error-path @API-034
-  Scenario: API-034 — Registrar calificación sin actividades configuradas
-    # Crear curso SIN actividades
-    * def coursePayload2 = read('classpath:testdata/courses/create_course_valid.json')
-    * set coursePayload2.name = 'NoActCurso_' + java.lang.System.currentTimeMillis()
-    Given path '/api/courses'
+  @happy-path @API-034
+  Scenario: API-034 — Recálculo de promedios tras cambio de ponderaciones
+    # Background ya configuró: Parcial 1 (30%), Parcial 2 (30%), Examen Final (40%)
+    * def p1Id = activityId1
+    * def p2Id = activityId2
+    * def finalId = activityId3
+    # Paso 1: Asignar notas — P1=4.0, P2=3.0, Final=5.0
+    * def g1 = {studentId: '#(studentIdentifier)', activityId: '#(p1Id)', grade: 4.0}
+    Given path '/api/courses', courseId, 'grades'
     And header X-Session-Token = token
-    And request coursePayload2
-    When method post
-    Then status 201
-    * def courseIdNoAct = response.id
-    # Inscribir estudiante en ese curso
-    * def enrollPayload2 = read('classpath:testdata/students/enroll_student_valid.json')
-    * set enrollPayload2.studentId = 'STU_NOACT_' + java.lang.System.currentTimeMillis()
-    * set enrollPayload2.name = 'NoActStudent'
-    * set enrollPayload2.email = 'noact_' + java.lang.System.currentTimeMillis() + '@test.com'
-    Given path '/api/courses', courseIdNoAct, 'students'
-    And header X-Session-Token = token
-    And request enrollPayload2
-    When method post
-    Then status 200
-    # Intentar calificar sin actividades
-    * def gradePayload = read('classpath:testdata/grades/grade_valid.json')
-    * set gradePayload.studentId = enrollPayload2.studentId
-    * set gradePayload.activityId = '00000000-0000-0000-0000-000000000000'
-    Given path '/api/courses', courseIdNoAct, 'grades'
-    And header X-Session-Token = token
-    And request gradePayload
+    And request g1
     When method put
-    Then status 404
+    Then status 200
+    * def g2 = {studentId: '#(studentIdentifier)', activityId: '#(p2Id)', grade: 3.0}
+    Given path '/api/courses', courseId, 'grades'
+    And header X-Session-Token = token
+    And request g2
+    When method put
+    Then status 200
+    * def g3 = {studentId: '#(studentIdentifier)', activityId: '#(finalId)', grade: 5.0}
+    Given path '/api/courses', courseId, 'grades'
+    And header X-Session-Token = token
+    And request g3
+    When method put
+    Then status 200
+    # Promedio ponderado previo = 4.0×0.30 + 3.0×0.30 + 5.0×0.40 = 4.10
+    # Paso 2: Actualizar ponderaciones (P1: 20%, P2: 20%, Final: 60%)
+    * def updatedAct = [{id: '#(p1Id)', name: 'Parcial 1', percentage: 20.0}, {id: '#(p2Id)', name: 'Parcial 2', percentage: 20.0}, {id: '#(finalId)', name: 'Examen Final', percentage: 60.0}]
+    Given path '/api/courses', courseId, 'activities'
+    And header X-Session-Token = token
+    And request updatedAct
+    When method put
+    Then status 200
+    # Paso 3: Verificar que el promedio se recalculó
+    # Nuevo promedio ponderado = 4.0×0.20 + 3.0×0.20 + 5.0×0.60 = 4.40
+    Given path '/api/courses', courseId, 'students', studentIdentifier, 'report'
+    And param format = 'json'
+    And header X-Session-Token = token
+    When method get
+    Then status 200
+    And match response.weightedAverage == 4.4

@@ -1,6 +1,6 @@
 @courses @post
 Feature: Crear curso — POST /api/courses
-  Valida creación de cursos: happy path, nombre vacío y nombre duplicado.
+  Valida creación de cursos: happy path, título duplicado y título vacío.
   HU: HDU_3 | Test Cases: API-012, API-013, API-014
 
   Background:
@@ -37,17 +37,7 @@ Feature: Crear curso — POST /api/courses
     And match response[*].name contains courseName
 
   @error-path @API-013
-  Scenario: API-013 — Crear curso con nombre vacío
-    * def payload = read('classpath:testdata/courses/create_course_empty_name.json')
-    Given path '/api/courses'
-    And header X-Session-Token = token
-    And request payload
-    When method post
-    Then status 400
-    And match response.message == 'Solicitud invalida'
-
-  @error-path @API-014
-  Scenario: API-014 — Crear curso con nombre duplicado (mismo docente)
+  Scenario: API-013 — Crear curso con título duplicado (mismo docente)
     * def courseName = 'DupCurso_' + java.lang.System.currentTimeMillis()
     * def payload = read('classpath:testdata/courses/create_course_valid.json')
     * set payload.name = courseName
@@ -66,3 +56,13 @@ Feature: Crear curso — POST /api/courses
     When method post
     Then status 409
     And match response.message == 'Ya existe un curso con este nombre'
+
+  @error-path @API-014
+  Scenario: API-014 — Crear curso con título vacío
+    * def payload = read('classpath:testdata/courses/create_course_empty_name.json')
+    Given path '/api/courses'
+    And header X-Session-Token = token
+    And request payload
+    When method post
+    Then status 400
+    And match response.message == 'Solicitud invalida'

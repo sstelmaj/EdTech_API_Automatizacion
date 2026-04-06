@@ -1,7 +1,7 @@
 @courses @get
 Feature: Detalle del curso — GET /api/courses/{courseId}
   Valida obtención de detalle de un curso existente y uno inexistente.
-  HU: HDU_3 | Test Cases: API-015, API-016
+  HU: HDU_4 | Test Cases: API-015, API-016
 
   Background:
     * url baseUrl
