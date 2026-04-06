@@ -41,7 +41,7 @@
                 <version>3.2.5</version>
                 <configuration>
                     <includes>
-                        <include>runners/TestRunner.java</include>
+                        <include>runners/*Runner.java</include>
                     </includes>
                 </configuration>
             </plugin>
