@@ -1,17 +1,17 @@
 [
   {
     "id": null,
+    "name": "Parcial 1",
+    "percentage": 30.0
+  },
+  {
+    "id": null,
+    "name": "Parcial 2",
+    "percentage": 30.0
+  },
+  {
+    "id": null,
     "name": "Examen Final",
     "percentage": 40.0
-  },
-  {
-    "id": null,
-    "name": "Tarea",
-    "percentage": 30.0
-  },
-  {
-    "id": null,
-    "name": "Proyecto",
-    "percentage": 30.0
   }
 ]
