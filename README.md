@@ -23,7 +23,14 @@ EdTech_API_Automatizacion/
 ├── src/test/java/
 │   ├── karate-config.js          # Configuración global: baseUrl, timeouts
 │   ├── runners/
-│   │   └── TestRunner.java       # Runner JUnit 5 — punto de entrada
+│   │   ├── TestRunner.java       # Runner principal — ejecuta toda la suite
+│   │   ├── AuthRunner.java        # Runner módulo auth
+│   │   ├── CoursesRunner.java     # Runner módulo courses
+│   │   ├── StudentsRunner.java    # Runner módulo students
+│   │   ├── ActivitiesRunner.java  # Runner módulo activities
+│   │   ├── GradesRunner.java      # Runner módulo grades
+│   │   ├── ReportsRunner.java     # Runner módulo reports
+│   │   └── SecurityRunner.java   # Runner módulo security
 │   ├── features/                 # Escenarios Karate (.feature)
 │   │   ├── auth/                 # register, login, logout, session
 │   │   ├── courses/              # list, create, get-detail
@@ -69,16 +76,16 @@ mvnw.cmd test
 
 ### 3. Ejecutar por módulo
 
-Para correr solo un grupo de tests, activa el método correspondiente en `TestRunner.java` (descomentá el bloque deseado) y ejecutá:
+Cada módulo tiene su propio Runner independiente:
 
 ```cmd
-mvnw.cmd test "-Dtest=runners.TestRunner#testAuth"
-mvnw.cmd test "-Dtest=runners.TestRunner#testCourses"
-mvnw.cmd test "-Dtest=runners.TestRunner#testStudents"
-mvnw.cmd test "-Dtest=runners.TestRunner#testActivities"
-mvnw.cmd test "-Dtest=runners.TestRunner#testGrades"
-mvnw.cmd test "-Dtest=runners.TestRunner#testReports"
-mvnw.cmd test "-Dtest=runners.TestRunner#testSecurity"
+mvnw.cmd test "-Dtest=runners.AuthRunner"
+mvnw.cmd test "-Dtest=runners.CoursesRunner"
+mvnw.cmd test "-Dtest=runners.StudentsRunner"
+mvnw.cmd test "-Dtest=runners.ActivitiesRunner"
+mvnw.cmd test "-Dtest=runners.GradesRunner"
+mvnw.cmd test "-Dtest=runners.ReportsRunner"
+mvnw.cmd test "-Dtest=runners.SecurityRunner"
 ```
 
 ### 4. Filtrar por tags
@@ -107,19 +114,19 @@ Abrilo en cualquier navegador para ver el detalle de cada escenario.
 |--------|----------|-------|-----------|
 | **Auth** | POST /api/auth/register | API-001–003 | Registro exitoso, campos vacíos, duplicado |
 | **Auth** | POST /api/auth/login | API-004–006 | Login exitoso, credenciales inválidas, campos vacíos |
-| **Auth** | POST /api/auth/logout | API-007–008 | Logout válido, token inválido |
-| **Auth** | GET /api/auth/session | API-009–010 | Sesión activa, sin token |
+| **Auth** | GET /api/auth/session | API-007–008 | Sesión activa, token inválido |
+| **Auth** | POST /api/auth/logout | API-009–010 | Logout exitoso, token inexistente |
 | **Courses** | GET /api/courses | API-011 | Listado vacío inicial |
 | **Courses** | POST /api/courses | API-012–014 | Crear curso, nombre vacío, duplicado |
 | **Courses** | GET /api/courses/{id} | API-015–016 | Detalle existente, inexistente |
 | **Students** | GET /api/students/{id} | API-017–018 | Buscar existente, inexistente |
-| **Students** | POST /api/courses/{id}/students | API-019–022 | Inscribir, campos vacíos, email inválido, autocompletado |
+| **Students** | POST /api/courses/{id}/students | API-019–022 | Inscribir, campos vacíos, estudiante ya inscrito, autocompletado |
 | **Activities** | PUT /api/courses/{id}/activities | API-023–029 | Configurar ponderaciones, errores de validación, actualización |
-| **Grades** | PUT /api/courses/{id}/grades | API-030–034 | Registrar nota, negativa, no numérica, null, sin actividades |
-| **Reports** | GET /api/courses/{id}/students/{id}/report | API-035–039 | Reporte completo, sin notas, error paths |
+| **Grades** | PUT /api/courses/{id}/grades | API-030–034 | Registrar nota, negativa, no numérica, null, recálculo de promedios |
+| **Reports** | GET /api/courses/{id}/students/{id}/report | API-035–039 | PDF, HTML, JSON, formato no soportado, notas vacías |
 | **Security** | Todos los endpoints | API-SEC-001 | Header ausente → 401/500 |
 
-**Total: 49 tests — 49 passed ✓**
+**Total: 85 tests — 72 passed ✓ | 13 fallan intencionalmente (HALLAZGOs documentados)**
 
 ---
 
