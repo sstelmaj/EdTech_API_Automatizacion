@@ -79,7 +79,6 @@ La suite apunta a `http://localhost:8080`. Asegurate de que la EdTech API esté 
 Cada módulo tiene su propio Runner independiente:
 
 ```cmd
-
 mvnw.cmd test "-Dtest=runners.AuthRunner"
 mvnw.cmd test "-Dtest=runners.CoursesRunner"
 mvnw.cmd test "-Dtest=runners.StudentsRunner"
@@ -87,6 +86,7 @@ mvnw.cmd test "-Dtest=runners.ActivitiesRunner"
 mvnw.cmd test "-Dtest=runners.GradesRunner"
 mvnw.cmd test "-Dtest=runners.ReportsRunner"
 mvnw.cmd test "-Dtest=runners.SecurityRunner"
+```
 
 ### 4. Filtrar por tags
 
