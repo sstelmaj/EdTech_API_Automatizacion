@@ -71,7 +71,7 @@ La suite apunta a `http://localhost:8080`. Asegurate de que la EdTech API esté 
 
 **Windows:**
 ```cmd
-mvnw.cmd test
+.\mvnw.cmd test
 ```
 
 ### 3. Ejecutar por módulo
@@ -79,6 +79,7 @@ mvnw.cmd test
 Cada módulo tiene su propio Runner independiente:
 
 ```cmd
+
 mvnw.cmd test "-Dtest=runners.AuthRunner"
 mvnw.cmd test "-Dtest=runners.CoursesRunner"
 mvnw.cmd test "-Dtest=runners.StudentsRunner"
@@ -86,14 +87,13 @@ mvnw.cmd test "-Dtest=runners.ActivitiesRunner"
 mvnw.cmd test "-Dtest=runners.GradesRunner"
 mvnw.cmd test "-Dtest=runners.ReportsRunner"
 mvnw.cmd test "-Dtest=runners.SecurityRunner"
-```
 
 ### 4. Filtrar por tags
 
 ```cmd
-mvnw.cmd test "-Dkarate.options=--tags @smoke"
-mvnw.cmd test "-Dkarate.options=--tags @happy-path"
-mvnw.cmd test "-Dkarate.options=--tags @error-path"
+.\mvnw.cmd test "-Dkarate.options=--tags @smoke"
+.\mvnw.cmd test "-Dkarate.options=--tags @happy-path"
+.\mvnw.cmd test "-Dkarate.options=--tags @error-path"
 ```
 
 ### 5. Ver el reporte HTML
