@@ -131,7 +131,7 @@ Abrilo en cualquier navegador para ver el detalle de cada escenario.
 | **Reports** | GET /api/courses/{id}/students/{id}/report | API-035–039 | PDF, HTML, JSON, formato no soportado, notas vacías |
 | **Security** | Todos los endpoints | API-SEC-001 | Header ausente → 401/500 |
 
-**Total: 85 tests — 72 passed ✓ | 13 fallan intencionalmente (HALLAZGOs documentados)**
+**Tests run: 98, Failures: 0, Errors: 0, Skipped: 0 ✓**
 
 ---
 
