@@ -108,6 +108,11 @@ Abrilo en cualquier navegador para ver el detalle de cada escenario.
 
 ---
 
+## Captura de pantalla del reporte cuando se ejecuta la suit completa
+
+<img width="1900" height="572" alt="image" src="https://github.com/user-attachments/assets/b53dcf98-007b-4f76-ad89-d5f2118826b0" />
+
+
 ## Cobertura de la API
 
 | Módulo | Endpoint | Tests | Escenarios |
